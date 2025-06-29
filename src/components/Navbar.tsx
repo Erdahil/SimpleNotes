@@ -1,43 +1,71 @@
-import './Navbar.css';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase.ts';
 import type { User } from '@supabase/supabase-js';
+import './Navbar.css';
+import LogoutButton from './LogoutButton.tsx';
 
-type NavbarProps = {
+type Props = {
   user: User | null;
 };
 
-export default function Navbar({ user }: NavbarProps) {
+export default function Navbar({ user }: Props) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLUListElement>(null);
   const navigate = useNavigate();
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate('/login');
+    navigate('/');
   };
 
-  const handleLogin = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-    });
-  };
+  // Zamykaj menu po kliknięciu poza nim
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [menuOpen]);
 
   return (
-    <header className="navbar">
-      <div className="navbar-title">
-        📝 SimpleNotes
+    <nav className="navbar">
+      <div className="navbar-left">
+        <Link to="/" className="logo">SimpleNotes</Link>
       </div>
 
-      <div className="navbar-links">
-        {user ? (
-          <>
-            <Link to="/" className="navbar-button">Strona główna</Link>
-            <Link to="/profile" className="navbar-button">Profil</Link>
-            <button onClick={handleLogout} className="navbar-button">Wyloguj się</button>
-          </>
-        ) : (
-          <button onClick={handleLogin} className="navbar-button navbar-login">Zaloguj się przez Google</button>
+      <div className="navbar-right">
+        <button className="menu-button" onClick={toggleMenu} aria-haspopup="true" aria-expanded={menuOpen}>
+          ☰ Menu
+        </button>
+        {menuOpen && (
+          <ul className="dropdown-menu" ref={menuRef}>
+            <li><Link to="/" onClick={() => setMenuOpen(false)}>Strona Główna</Link></li>
+            <li><Link to="/notes" onClick={() => setMenuOpen(false)}>Notatki</Link></li>
+            <li><Link to="/profile" onClick={() => setMenuOpen(false)}>Profil</Link></li>
+            <li><Link to="/notes/new" onClick={() => setMenuOpen(false)}>Nowa notatka</Link></li>
+            {user ? (
+              <li>
+                <LogoutButton />
+              </li>
+            ) : (
+              <li>
+                <Link to="/login" onClick={() => setMenuOpen(false)}>Zaloguj</Link>
+              </li>
+            )}
+          </ul>
         )}
       </div>
-    </header>
+    </nav>
   );
 }

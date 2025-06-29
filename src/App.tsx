@@ -7,6 +7,8 @@ import Login from './pages/Login';
 import Editor from './pages/Editor';
 import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
+import Notes from './pages/Notes';
+import NewNote from './pages/NewNote';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -35,7 +37,9 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={user ? <Editor user={user} /> : <Navigate to="/login" />} />
+        <Route path="/notes" element={<Notes />} />
         <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
+        <Route path="/notes/new" element={<NewNote />} />
       </Routes>
     </BrowserRouter>
   );
