@@ -27,11 +27,11 @@ function App() {
     };
   }, []);
 
-  if (loading) return <p>Ładowanie...</p>;
+  if (loading) return <p className="p-4">Ładowanie...</p>;
 
   return (
     <BrowserRouter>
-      {user && <Navbar />}
+      <Navbar user={user} />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/" element={user ? <Editor user={user} /> : <Navigate to="/login" />} />

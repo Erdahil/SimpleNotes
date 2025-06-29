@@ -1,20 +1,43 @@
-import { Link } from 'react-router-dom';
+import './Navbar.css';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../services/supabase.ts';
+import type { User } from '@supabase/supabase-js';
 
-export default function Navbar() {
+type NavbarProps = {
+  user: User | null;
+};
+
+export default function Navbar({ user }: NavbarProps) {
+  const navigate = useNavigate();
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
+    navigate('/login');
+  };
+
+  const handleLogin = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+    });
   };
 
   return (
-    <nav className="bg-gray-800 text-white px-4 py-2 flex justify-between items-center">
-      <div className="space-x-4">
-        <Link to="/" className="hover:underline">Strona główna</Link>
-        <Link to="/profile" className="hover:underline">Profil</Link>
+    <header className="navbar">
+      <div className="navbar-title">
+        📝 SimpleNotes
       </div>
-      <button onClick={handleLogout} className="bg-red-500 hover:bg-red-600 px-3 py-1 rounded">
-        Wyloguj się
-      </button>
-    </nav>
+
+      <div className="navbar-links">
+        {user ? (
+          <>
+            <Link to="/" className="navbar-button">Strona główna</Link>
+            <Link to="/profile" className="navbar-button">Profil</Link>
+            <button onClick={handleLogout} className="navbar-button">Wyloguj się</button>
+          </>
+        ) : (
+          <button onClick={handleLogin} className="navbar-button navbar-login">Zaloguj się przez Google</button>
+        )}
+      </div>
+    </header>
   );
 }
