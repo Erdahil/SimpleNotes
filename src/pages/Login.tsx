@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../services/supabase.ts';
 import { useNavigate } from 'react-router-dom';
+import './Login.css';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -36,23 +37,16 @@ export default function Login() {
 
   const handleGoogleLogin = async () => {
     const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-    if (error) {
-      console.error('Błąd logowania przez Google:', error.message);
-      setSubmitError(error.message);
-    }
+    if (error) setSubmitError(error.message);
   };
 
   const handleEmailAuth = async () => {
     if (!validateForm()) return;
-
     setSubmitError('');
 
-    let result;
-    if (isRegistering) {
-      result = await supabase.auth.signUp({ email, password });
-    } else {
-      result = await supabase.auth.signInWithPassword({ email, password });
-    }
+    const result = isRegistering
+      ? await supabase.auth.signUp({ email, password })
+      : await supabase.auth.signInWithPassword({ email, password });
 
     if (result.error) {
       setSubmitError(result.error.message);
@@ -62,68 +56,64 @@ export default function Login() {
   };
 
   return (
-    <div style={{ padding: '4rem', maxWidth: '400px', margin: '0 auto' }}>
-      <h2>{isRegistering ? 'Utwórz konto' : 'Zaloguj się'}</h2>
+    <div className="login-container">
+      <div className="login-card">
+        <h2 className="login-title">
+          {isRegistering ? 'Utwórz konto' : 'Zaloguj się'}
+        </h2>
 
-      <button onClick={handleGoogleLogin} style={{ marginBottom: '1rem' }}>
-        Zaloguj przez Google
-      </button>
-
-      <hr style={{ margin: '1rem 0' }} />
-
-      <div style={{ marginBottom: '1rem' }}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: '0.5rem' }}
-        />
-        {emailError && (
-          <p style={{ color: 'red', fontSize: '0.9rem' }}>{emailError}</p>
-        )}
-      </div>
-
-      <div style={{ marginBottom: '1rem' }}>
-        <input
-          type="password"
-          placeholder="Hasło"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ display: 'block', width: '100%', padding: '0.5rem' }}
-        />
-        {passwordError && (
-          <p style={{ color: 'red', fontSize: '0.9rem' }}>{passwordError}</p>
-        )}
-      </div>
-
-      <button onClick={handleEmailAuth} style={{ width: '100%', padding: '0.75rem' }}>
-        {isRegistering ? 'Zarejestruj się' : 'Zaloguj się'}
-      </button>
-
-      {submitError && (
-        <p style={{ color: 'red', fontSize: '0.9rem', marginTop: '1rem' }}>{submitError}</p>
-      )}
-
-      <p style={{ marginTop: '1rem' }}>
-        {isRegistering ? 'Masz już konto?' : 'Nie masz konta?'}{' '}
-        <button
-          onClick={() => {
-            setIsRegistering(!isRegistering);
-            setEmailError('');
-            setPasswordError('');
-            setSubmitError('');
-          }}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: 'blue',
-            cursor: 'pointer',
-          }}
-        >
-          {isRegistering ? 'Zaloguj się' : 'Zarejestruj się'}
+        <button className="google-button" onClick={handleGoogleLogin}>
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google"
+            className="google-icon"
+          />
+          Zaloguj przez Google
         </button>
-      </p>
+
+        <div className="separator"><span>lub</span></div>
+
+        <div className="input-group">
+          <label>Email</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          {emailError && <p className="error">{emailError}</p>}
+        </div>
+
+        <div className="input-group">
+          <label>Hasło</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          {passwordError && <p className="error">{passwordError}</p>}
+        </div>
+
+        <button className="submit-button" onClick={handleEmailAuth}>
+          {isRegistering ? 'Zarejestruj się' : 'Zaloguj się'}
+        </button>
+
+        {submitError && <p className="error">{submitError}</p>}
+
+        <div className="toggle">
+          {isRegistering ? 'Masz już konto?' : 'Nie masz konta?'}{' '}
+          <button
+            onClick={() => {
+              setIsRegistering(!isRegistering);
+              setEmailError('');
+              setPasswordError('');
+              setSubmitError('');
+            }}
+            className="toggle-link"
+          >
+            {isRegistering ? 'Zaloguj się' : 'Zarejestruj się'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
