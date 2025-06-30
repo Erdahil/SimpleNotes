@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 import Notes from './pages/Notes';
 import NewNote from './pages/NewNote';
+import Note from './pages/Note.tsx';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -40,6 +41,7 @@ function App() {
         <Route path="/notes" element={<Notes />} />
         <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
         <Route path="/notes/new" element={<NewNote />} />
+        <Route path="/notes/:id" element={<Note />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,16 +1,17 @@
 import { useRef, useEffect, useState } from 'react';
-import { supabase } from '../services/supabase.ts'; 
+import { supabase } from '../services/supabase.ts';
+import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
-import { useNavigate } from 'react-router-dom';
 import './NewNote.css';
 
-export default function NewNote() {
+export default function Note() {
+  const { id } = useParams();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [ctx, setCtx] = useState<CanvasRenderingContext2D | null>(null);
-  const [title, setTitle] = useState('Nowa Notatka');
+  const [title, setTitle] = useState('Ładowanie...');
   const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [tempTitle, setTempTitle] = useState(title);
+  const [tempTitle, setTempTitle] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,49 @@ export default function NewNote() {
       }
     }
   }, []);
+
+  useEffect(() => {
+    if (!id || !ctx) return;
+
+    (async () => {
+      const user = (await supabase.auth.getUser()).data.user;
+      if (!user) {
+        alert('Musisz być zalogowany, żeby edytować notatkę!');
+        navigate('/notes');
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('id', id)
+        .eq('user_id', user.id)
+        .single();
+
+      if (error || !data) {
+        alert('Nie znaleziono tej notatki.');
+        navigate('/notes');
+        return;
+      }
+
+      setTitle(data.title);
+      setTempTitle(data.title);
+
+      const { data: signed } = await supabase.storage
+        .from('notes')
+        .createSignedUrl(data.image_path, 60);
+
+      if (signed?.signedUrl) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+          ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+        };
+        img.src = signed.signedUrl;
+      }
+    })();
+  }, [id, ctx, navigate]);
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
     const { x, y } = getCoords(e);
@@ -69,8 +113,8 @@ export default function NewNote() {
   const handleSave = async () => {
     const user = (await supabase.auth.getUser()).data.user;
     if (!user) {
-        alert("Musisz być zalogowany, żeby zapisać notatkę!");
-        return;
+      alert("Musisz być zalogowany, żeby zapisać notatkę!");
+      return;
     }
 
     const canvas = canvasRef.current;
@@ -81,35 +125,31 @@ export default function NewNote() {
     const fileName = `${user.id}/${uuidv4()}.png`;
 
     const { error: uploadError } = await supabase.storage
-        .from('notes')
-        .upload(fileName, blob, {
+      .from('notes')
+      .upload(fileName, blob, {
         contentType: 'image/png',
         upsert: true,
-        });
+      });
 
     if (uploadError) {
-        console.error('Błąd zapisu obrazu:', uploadError.message);
-        alert('Wystąpił błąd przy zapisie notatki.');
-        return;
+      console.error('Błąd zapisu obrazu:', uploadError.message);
+      alert('Wystąpił błąd przy zapisie notatki.');
+      return;
     }
 
-    const { error: dbError } = await supabase
-        .from('notes')
-        .insert({
-        user_id: user.id,
-        title: title,
-        image_path: fileName,
-        });
+    const { error: updateError } = await supabase
+      .from('notes')
+      .update({ title, image_path: fileName })
+      .eq('id', id);
 
-    if (dbError) {
-        console.error('Błąd zapisu do tabeli:', dbError.message);
-        alert('Wystąpił błąd przy zapisie metadanych.');
-        return;
+    if (updateError) {
+      console.error('Błąd zapisu do tabeli:', updateError.message);
+      alert('Wystąpił błąd przy zapisie metadanych.');
+      return;
     }
 
-    //alert('Notatka zapisana w Supabase!');
     navigate('/notes');
-    };
+  };
 
   const handleTitleEdit = () => {
     setTempTitle(title);
@@ -164,7 +204,7 @@ export default function NewNote() {
           </>
         )}
       </div>
-      
+
       <canvas
         ref={canvasRef}
         className="drawing-canvas"
