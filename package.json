@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://SimpleNotes.github.io/simple-notes",
+  "homepage": "https://erdahil.github.io/SimpleNotes/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
