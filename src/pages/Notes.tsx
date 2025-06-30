@@ -61,39 +61,41 @@ export default function Notes() {
   };
 
   return (
-    <div className="notes-page">
-      <h1>Twoje notatki</h1>
-      <Link to="/notes/new">
-        <button className="add-note-button">➕ Dodaj nową notatkę</button>
-      </Link>
+    <div className="notes-container">
+      <header className="notes-header">
+        <h1>Twoje notatki</h1>
+        <Link to="/notes/new">
+          <button className="add-note-button">Dodaj nową notatkę</button>
+        </Link>
+      </header>
 
       {loading ? (
-        <p>Ładowanie notatek...</p>
+        <p className="loading-text">Ładowanie notatek...</p>
       ) : notes.length === 0 ? (
-        <p>Brak notatek</p>
+        <p className="empty-text">Brak notatek</p>
       ) : (
         <ul className="notes-list">
           {notes.map((note) => (
-            <Link to={`/notes/${note.id}`} className="note-link">
             <li key={note.id} className="note-item">
-                
-              <img
-                src={imageUrls[note.id]}
-                alt={note.title}
-                className="note-thumbnail"
-                
-              />
-              <div className="note-info">
-                <h3 className="note-title">{note.title}</h3>
-                <button
-                  className="delete-note-button"
-                  onClick={() => handleDelete(note)}
-                >
-                  Usuń
-                </button>
-              </div>
+              <Link to={`/notes/${note.id}`} className="note-link">
+                <img
+                  src={imageUrls[note.id]}
+                  alt={note.title}
+                  className="note-thumbnail"
+                  loading="lazy"
+                />
+                <div className="note-info">
+                  <h3 className="note-title">{note.title}</h3>
+                </div>
+              </Link>
+              <button
+                className="delete-note-button"
+                onClick={() => handleDelete(note)}
+                title={`Usuń notatkę "${note.title}"`}
+              >
+                Usuń
+              </button>
             </li>
-            </Link>
           ))}
         </ul>
       )}

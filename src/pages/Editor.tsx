@@ -37,14 +37,14 @@ export default function Editor({ user }: { user: User | null }) {
           onClick={() => navigate('/notes/new')}
           title="Utwórz nową notatkę"
         >
-          + Nowa notatka
+          Nowa notatka
         </button>
         <button
           className="my-notes-button"
           onClick={() => navigate('/notes')}
           title="Przejdź do listy notatek"
         >
-          📋 Moje notatki
+          Moje notatki
         </button>
       </div>
     </div>

@@ -39,36 +39,65 @@ export default function Navbar({ user }: Props) {
 
   return (
     <nav className="navbar">
-      <div className="navbar-left">
-        <Link to="/" className="logo">SimpleNotes</Link>
-      </div>
+  <div className="navbar-left">
+    <Link to="/" className="logo">SimpleNotes</Link>
+  </div>
 
-      <div className="navbar-right">
-        <button className="menu-button" onClick={toggleMenu} aria-haspopup="true" aria-expanded={menuOpen}>
-          ☰ Menu
-        </button>
-        {menuOpen && (
-          <ul className="dropdown-menu" ref={menuRef}>
-            <li><Link to="/" onClick={() => setMenuOpen(false)}>Strona Główna</Link></li>
-            <li><Link to="/notes" onClick={() => setMenuOpen(false)}>Notatki</Link></li>
-            <li><Link to="/profile" onClick={() => setMenuOpen(false)}>Profil</Link></li>
-            <li><Link to="/notes/new" onClick={() => setMenuOpen(false)}>Nowa notatka</Link></li>
-            {user ? (
-              <li>
-                <LogoutButton onClick={() => {
-                  supabase.auth.signOut();
-                  setMenuOpen(false);
-                  navigate('/login');
-                }} />
-              </li>
-            ) : (
-              <li>
-                <Link to="/login" onClick={() => setMenuOpen(false)}>Zaloguj</Link>
-              </li>
-            )}
-          </ul>
+  <div className="navbar-right">
+    <button className="menu-button" onClick={toggleMenu} aria-haspopup="true" aria-expanded={menuOpen}>
+      ☰ Menu
+    </button>
+    {menuOpen && (
+      <ul className="dropdown-menu" ref={menuRef}>
+        <li><Link to="/" onClick={() => setMenuOpen(false)}>Strona Główna</Link></li>
+        
+        <li className={!user ? 'disabled' : ''}>
+          <Link 
+            to={user ? "/notes" : "#"} 
+            onClick={() => user && setMenuOpen(false)} 
+            tabIndex={user ? 0 : -1}
+            aria-disabled={!user}
+          >
+            Notatki
+          </Link>
+        </li>
+        <li className={!user ? 'disabled' : ''}>
+          <Link 
+            to={user ? "/profile" : "#"} 
+            onClick={() => user && setMenuOpen(false)} 
+            tabIndex={user ? 0 : -1}
+            aria-disabled={!user}
+          >
+            Profil
+          </Link>
+        </li>
+        <li className={!user ? 'disabled' : ''}>
+          <Link 
+            to={user ? "/notes/new" : "#"} 
+            onClick={() => user && setMenuOpen(false)} 
+            tabIndex={user ? 0 : -1}
+            aria-disabled={!user}
+          >
+            Nowa notatka
+          </Link>
+        </li>
+
+        {user ? (
+          <li>
+            <LogoutButton onClick={() => {
+              supabase.auth.signOut();
+              setMenuOpen(false);
+              navigate('/login');
+            }} />
+          </li>
+        ) : (
+          <li>
+            <Link to="/login" onClick={() => setMenuOpen(false)}>Zaloguj</Link>
+          </li>
         )}
-      </div>
-    </nav>
+      </ul>
+    )}
+  </div>
+</nav>
   );
 }
