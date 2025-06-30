@@ -1,16 +1,21 @@
-import { supabase } from '../services/supabase.ts';
 import './Navbar.css'
+import './LogoutButton.css';
 
-export default function LogoutButton() {
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Wylogowanie nie powiodło się:', error.message);
-    } else {
-      console.log('Wylogowano pomyślnie');
-      window.location.reload();
-    }
-  };
-
-  return <button onClick={handleLogout}>Wyloguj</button>;
+interface LogoutButtonProps {
+  onClick: () => void;
 }
+
+const LogoutButton: React.FC<LogoutButtonProps> = ({ onClick }) => {
+  return (
+    <div onClick={onClick} className="logout-button" role="button" tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          onClick();
+        }
+      }}
+    >
+      Wyloguj
+    </div>
+  );
+};
+export default LogoutButton;

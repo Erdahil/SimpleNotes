@@ -21,7 +21,6 @@ export default function Navbar({ user }: Props) {
     navigate('/');
   };
 
-  // Zamykaj menu po kliknięciu poza nim
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
@@ -56,7 +55,11 @@ export default function Navbar({ user }: Props) {
             <li><Link to="/notes/new" onClick={() => setMenuOpen(false)}>Nowa notatka</Link></li>
             {user ? (
               <li>
-                <LogoutButton />
+                <LogoutButton onClick={() => {
+                  supabase.auth.signOut();
+                  setMenuOpen(false);
+                  navigate('/login');
+                }} />
               </li>
             ) : (
               <li>
