@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Notes from './pages/Notes';
 import NewNote from './pages/NewNote';
 import Note from './pages/Note.tsx';
+import CallbackHandler from './components/CallbackHandler.tsx';
 
 function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -42,6 +43,7 @@ function App() {
         <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
         <Route path="/notes/new" element={<NewNote />} />
         <Route path="/notes/:id" element={<Note />} />
+        <Route path="/callback" element={<CallbackHandler />} />
       </Routes>
     </BrowserRouter>
   );
