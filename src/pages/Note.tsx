@@ -48,7 +48,7 @@ export default function NoteEdit() {
         .single();
 
       if (error || !data) {
-        alert('Nie znaleziono tej notatki, spierdalaj!');
+        alert('Nie znaleziono tej notatki.');
         navigate('/notes');
         return;
       }
@@ -65,7 +65,6 @@ export default function NoteEdit() {
         img.crossOrigin = 'anonymous';
         img.onload = () => {
           ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          // Wklej obraz w oryginalnym rozmiarze na środku canvasu
           const x = (ctx.canvas.width - img.width) / 2;
           const y = (ctx.canvas.height - img.height) / 2;
           ctx.drawImage(img, x, y);
