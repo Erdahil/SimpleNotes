@@ -37,7 +37,7 @@ function App() {
       <Navbar user={user} />
       <Routes>
         <Route path="/login" element={<Login />} />
-        <Route path="/" element={user ? <Editor user={user} /> : <Navigate to="/login" />} />
+        <Route path="/" element={<Editor user={user} />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/profile" element={user ? <Profile user={user} /> : <Navigate to="/login" />} />
         <Route path="/notes/new" element={<NewNote />} />

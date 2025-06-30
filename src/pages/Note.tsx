@@ -4,7 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import './NewNote.css';
 
-export default function Note() {
+export default function NoteEdit() {
   const { id } = useParams();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -48,7 +48,7 @@ export default function Note() {
         .single();
 
       if (error || !data) {
-        alert('Nie znaleziono tej notatki.');
+        alert('Nie znaleziono tej notatki, spierdalaj!');
         navigate('/notes');
         return;
       }
@@ -65,7 +65,10 @@ export default function Note() {
         img.crossOrigin = 'anonymous';
         img.onload = () => {
           ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-          ctx.drawImage(img, 0, 0, ctx.canvas.width, ctx.canvas.height);
+          // Wklej obraz w oryginalnym rozmiarze na środku canvasu
+          const x = (ctx.canvas.width - img.width) / 2;
+          const y = (ctx.canvas.height - img.height) / 2;
+          ctx.drawImage(img, x, y);
         };
         img.src = signed.signedUrl;
       }
@@ -73,11 +76,10 @@ export default function Note() {
   }, [id, ctx, navigate]);
 
   const startDrawing = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!ctx) return;
     const { x, y } = getCoords(e);
-    if (ctx) {
-      ctx.beginPath();
-      ctx.moveTo(x, y);
-    }
+    ctx.beginPath();
+    ctx.moveTo(x, y);
     setIsDrawing(true);
   };
 
@@ -151,6 +153,10 @@ export default function Note() {
     navigate('/notes');
   };
 
+  const handleCancel = () => {
+    navigate('/notes');
+  };
+
   const handleTitleEdit = () => {
     setTempTitle(title);
     setIsEditingTitle(true);
@@ -217,7 +223,17 @@ export default function Note() {
         onTouchEnd={endDrawing}
       />
       <br />
-      <button onClick={handleSave} className="save-button">Zapisz</button>
+      <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem' }}>
+        <button onClick={handleSave} className="save-button">Zapisz</button>
+        <button
+          onClick={handleCancel}
+          className="save-button"
+          style={{ backgroundColor: '#6c757d' }}
+          title="Cofnij zmiany i wróć do listy"
+        >
+          Anuluj
+        </button>
+      </div>
     </div>
   );
 }
