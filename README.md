@@ -1,6 +1,9 @@
 # SimpleNotes by Paweł Charysz
 
-SimpleNotes to prosta aplikacja pozwalająca na tworzenie i edycję odręcznych notatek przystosowana zarówno do użytku na PC jak i mobilnie. Do używania aplikacji wymagane jest utworzenie konta i zweryfikowanie adresu e-mail, lub zalogowanie się za pomocą konta Google.  
+SimpleNotes to prosta aplikacja pozwalająca na tworzenie i edycję odręcznych notatek przystosowana zarówno do użytku na PC jak i mobilnie. Do używania aplikacji wymagane jest utworzenie konta i zweryfikowanie adresu e-mail, lub zalogowanie się za pomocą konta Google. 
+
+Adres aplikacji:
+https://erdahil.github.io/SimpleNotes/ 
 
 ## Użyte technologie:
 - React - podstawa całej aplikacji, pozwala budować interaktywne UI z komponentami.
