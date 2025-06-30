@@ -33,7 +33,7 @@ function App() {
   if (loading) return <p className="p-4">Ładowanie...</p>;
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/SimpleNotes">
       <Navbar user={user} />
       <Routes>
         <Route path="/login" element={<Login />} />
