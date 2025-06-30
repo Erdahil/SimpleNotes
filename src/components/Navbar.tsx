@@ -16,10 +16,10 @@ export default function Navbar({ user }: Props) {
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const handleLogout = async () => {
+  /*const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
-  };
+  };*/
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
