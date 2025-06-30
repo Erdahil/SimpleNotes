@@ -1,7 +1,9 @@
 .new-note-container {
   padding-top: 80px;
-  padding-inline: 2rem;
+  padding-inline: 10px;
   text-align: center;
+  box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .title-container {

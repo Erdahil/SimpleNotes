@@ -6,6 +6,7 @@
   align-items: center;
   padding: 2rem;
   box-sizing: border-box;
+  color: #333;
 }
 
 .login-card {
@@ -124,5 +125,70 @@
 
   .login-card {
     padding: 1.5rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .login-container {
+    background: #121212;
+    color: #eee;
+  }
+
+  .login-card {
+    background: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+  }
+
+  .login-title {
+    color: #eee;
+  }
+
+  .google-button {
+    background: #2c2c2c;
+    border: 1px solid #444;
+    color: #eee;
+  }
+
+  .google-button:hover {
+    background-color: #3a3a3a;
+  }
+
+  .separator {
+    color: #aaa;
+  }
+
+  .input-group label {
+    color: #eee;
+  }
+
+  .input-group input {
+    background: #2c2c2c;
+    border: 1px solid #555;
+    color: #eee;
+  }
+
+  .input-group input::placeholder {
+    color: #999;
+  }
+
+  .error {
+    color: #ff6b6b;
+  }
+
+  .submit-button {
+    background: #2979ff;
+    color: #fff;
+  }
+
+  .submit-button:hover {
+    background: #1565c0;
+  }
+
+  .toggle {
+    color: #bbb;
+  }
+
+  .toggle-link {
+    color: #2979ff;
   }
 }
